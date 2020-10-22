@@ -39,26 +39,55 @@ var myMap= L.map("map-id",{
 
 
 //URL to get endpoint json file for bike information
-const url="https://gbfs.citibikenyc.com/gbfs/en/station_information.json";
+const info_url="https://gbfs.citibikenyc.com/gbfs/en/station_information.json";
+const status_url="https://gbfs.citibikenyc.com/gbfs/en/station_status.json";
 
-d3.json(url,function(data) {
+d3.json(info_url,function(info_data) {
 
-    //get array of stations
-    var stationsData=data.data.stations;
-    //console.log(stationsData);
-    
-    stationsData.forEach(station => {
-        var cor=[station.lat,station.lon]
-        //console.log(cor);
-        L.marker(cor)
-            .bindPopup("<h3>"+station.name+"</h3<hr><h5> Has Kiosk: "+station.has_kiosk+"</h5>")
-            .addTo(myMap)
-    });
+    d3.json(status_url,function(status_data){
+        //get array of stations
+        var infoData=info_data.data.stations;
+        var statusData=status_data.data.stations;
+        var updateTime=infoData.last_updated;
+
+        //loop through both datasets
+        for (var i=0; i < infoData.length; i++){
+
+            // Create a new station object with properties of both station objects since both array line up the same
+            var station = Object.assign({}, infoData[i], statusData[i]);
+
+            var cor=[station.lat,station.lon]
+
+            if (station.is_installed === false) {
+                L.marker(cor)
+                  .bindPopup("<h2>Coming Soon</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                  .addTo(comingSoon);
+            }
+            else if (station.num_bikes_available===0){
+                L.marker(cor)
+                .bindPopup("<h2>Empty Station</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                .addTo(emptyStations)
+            }
+            else if (station.num_bikes_available < 5){
+                L.marker(cor)
+                .bindPopup("<h2>Less Than 5 Available</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                .addTo(lowStations)
+            }
+            else {
+                L.marker(cor)
+                .bindPopup("<h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                .addTo(healthyStations)
+            }
+        
+        };
+   });
 
 });
 
 var overlayMaps = {
-    "Healthy Stations":healthyStations
+    "Healthy Stations":healthyStations,
+    "Coming Soon": comingSoon,
+    "Low Capacity": lowStations
 };
 
 
