@@ -25,16 +25,16 @@ accessToken: API_KEY
 
 // Create a baseMaps object to hold all the tile(map) layers
 var baseMaps = {
-    "Street Map": lightmap,
-    "Outdoor Map":outdoorMap
+    "Outdoor Map":outdoorMap,
+    "Light Map": lightmap,
 };
 
 var myMap= L.map("map-id",{
-    center: [40.7469358,-73.9734163],
-    zoom: 13,
+    center: [40.782346,-73.9621082],
+    zoom: 15,
 
     //initial the page with the following
-    layers:[lightmap,healthyStations]
+    layers:[outdoorMap,healthyStations]
 });
 
 
@@ -58,7 +58,7 @@ d3.json(info_url,function(info_data) {
 
             var cor=[station.lat,station.lon]
 
-            if (station.is_installed === false) {
+            if (station.is_installed===0) {
                 L.marker(cor)
                   .bindPopup("<h2>Coming Soon</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
                   .addTo(comingSoon);
@@ -67,6 +67,11 @@ d3.json(info_url,function(info_data) {
                 L.marker(cor)
                 .bindPopup("<h2>Empty Station</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
                 .addTo(emptyStations)
+            }
+            else if (station.is_installed===1 && station.is_renting===0){
+                L.marker(cor)
+                .bindPopup("<h2>Out of Order</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                .addTo(outofOrder)
             }
             else if (station.num_bikes_available < 5){
                 L.marker(cor)
@@ -86,8 +91,10 @@ d3.json(info_url,function(info_data) {
 
 var overlayMaps = {
     "Healthy Stations":healthyStations,
-    "Coming Soon": comingSoon,
-    "Low Capacity": lowStations
+    "Low Availability": lowStations,
+    "Empty Statioin": emptyStations,
+    "Out of order":outofOrder,
+    "Coming Soon": comingSoon
 };
 
 
