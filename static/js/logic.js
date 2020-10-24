@@ -35,16 +35,17 @@ var myMap= L.map("map-id",{
     zoom: 15,
 
     //initial the page with the following
-    layers:[outdoorMap,healthyStations]
+    layers:[outdoorMap,comingSoon,emptyStations,outofOrder,lowStations,healthyStations]
 });
 
 // Initialize an object containing icons for each layer group
 var icons = {
+
     COMING_SOON: L.ExtraMarkers.icon({
-      icon: "ion-settings",
-      iconColor: "white",
-      markerColor: "yellow",
-      shape: "star"
+        shape: 'star',
+        markerColor: 'yellow',
+        icon: 'ion-clock',
+        iconColor: 'white',
     }),
     EMPTY: L.ExtraMarkers.icon({
       icon: "ion-android-bicycle",
@@ -53,7 +54,7 @@ var icons = {
       shape: "circle"
     }),
     OUT_OF_ORDER: L.ExtraMarkers.icon({
-      icon: "ion-minus-circled",
+      icon: "ion-settings",
       iconColor: "white",
       markerColor: "blue-dark",
       shape: "penta"
@@ -131,7 +132,7 @@ d3.json(info_url,function(info_data) {
                 L.marker(cor,{
                     icon:icons.LOW
                 })
-                .bindPopup("<h2>Less Than 5 Available</h2><hr><h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                .bindPopup("<h3>Low Station</h3><hr><p>"+station.name+"</p><p> Station ID: "+station.station_id+"</p><p class='healthy'><strong>"+station.num_bikes_available+"</strong> bike available</p>")
                 .addTo(lowStations)
             }
             else {
@@ -139,7 +140,7 @@ d3.json(info_url,function(info_data) {
                 L.marker(cor,{
                     icon:icons.NORMAL
                 })
-                .bindPopup("<h3>"+station.name+"</h3><h3> Station ID: "+station.station_id+"</h3>")
+                .bindPopup("<h3>Healthy Station</h3><hr><p>"+station.name+"</p><p> Station ID: "+station.station_id+"</p><p class='healthy'><strong>"+station.num_bikes_available+"</strong> bike available</p>")
                 .addTo(healthyStations)
             }
         
