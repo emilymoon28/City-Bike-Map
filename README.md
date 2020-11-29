@@ -13,7 +13,7 @@ This geomap visualization provides live bike station status
 
 4. Created legend with matching colors to the map and the number of each station.
 
-Note: You would need your own MapBox token in order to load the base map. The file location for inputting token is static > js > confic.js
+Note: You would need your own MapBox token in order to load the base map. The file location for inputting token is static > js > config.js
 <br>
 
 Here's a snapshot of the visualization.
